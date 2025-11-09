@@ -29,11 +29,8 @@ async def lifespan(app: FastAPI):
     try:
         # Initialize Cosmos DB service
         cosmos_service = get_cosmos_service()
-        logger.info(f"Connected to Cosmos DB: {settings.COSMOS_DATABASE_NAME}")
-        
-        # Initialize containers if they don't exist
-        await cosmos_service._ensure_containers()
-        logger.info("Cosmos DB containers verified")
+        logger.info(f"Connected to Cosmos DB: {settings.cosmos_database_name}")
+        logger.info("Cosmos DB containers initialized")
         
         logger.info("Application startup complete")
         
@@ -65,8 +62,8 @@ def create_app() -> FastAPI:
     settings = get_settings()
     
     app = FastAPI(
-        title=settings.APP_NAME,
-        version=settings.APP_VERSION,
+        title=settings.app_name,
+        version=settings.app_version,
         description="AI-powered data analytics chat application with multi-agent architecture",
         lifespan=lifespan,
         docs_url="/api/docs",
@@ -77,7 +74,7 @@ def create_app() -> FastAPI:
     # Configure CORS
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
+        allow_origins=settings.cors_origins_list,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -92,7 +89,7 @@ def create_app() -> FastAPI:
         """Root endpoint."""
         return {
             "message": "Data Analytics Chat Tool API",
-            "version": settings.APP_VERSION,
+            "version": settings.app_version,
             "docs": "/api/docs"
         }
     
@@ -109,7 +106,7 @@ def create_app() -> FastAPI:
             }
         )
     
-    logger.info(f"FastAPI application created: {settings.APP_NAME} v{settings.APP_VERSION}")
+    logger.info(f"FastAPI application created: {settings.app_name} v{settings.app_version}")
     
     return app
 
@@ -125,8 +122,8 @@ if __name__ == "__main__":
     
     uvicorn.run(
         "main:app",
-        host=settings.HOST,
-        port=settings.PORT,
-        reload=settings.DEBUG,
+        host=settings.api_host,
+        port=settings.api_port,
+        reload=settings.debug,
         log_level="info"
     )

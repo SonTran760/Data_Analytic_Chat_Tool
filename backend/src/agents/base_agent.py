@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 
 from langgraph.graph import StateGraph
-from langchain.schema import BaseMessage
+from langchain_core.messages import BaseMessage
 
 from src.utils import LoggerMixin
 

@@ -4,8 +4,8 @@ Supports multiple providers: OpenAI, Google Gemini, Anthropic Claude.
 """
 from typing import Any, Dict, List, Literal, Optional
 
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import AIMessage, BaseMessage, HumanMessage, SystemMessage
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
 

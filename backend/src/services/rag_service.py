@@ -5,9 +5,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import chromadb
 from chromadb.config import Settings as ChromaSettings
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import Chroma
 
 from src.utils import LoggerMixin, settings
 

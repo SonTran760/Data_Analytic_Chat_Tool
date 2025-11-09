@@ -3,8 +3,8 @@ Memory service for managing conversation context and history.
 """
 from typing import Dict, List, Optional
 
-from langchain.memory import ConversationBufferMemory
-from langchain.schema import BaseMessage, HumanMessage, AIMessage
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 
 from src.models import Conversation, Message, MessageRole
 from src.utils import LoggerMixin, settings
@@ -15,9 +15,9 @@ class MemoryService(LoggerMixin):
     
     def __init__(self):
         """Initialize memory service."""
-        self._memories: Dict[str, ConversationBufferMemory] = {}
+        self._memories: Dict[str, ChatMessageHistory] = {}
     
-    def get_memory(self, conversation_id: str) -> ConversationBufferMemory:
+    def get_memory(self, conversation_id: str) -> ChatMessageHistory:
         """
         Get or create memory for a conversation.
         
@@ -25,14 +25,10 @@ class MemoryService(LoggerMixin):
             conversation_id: ID of the conversation
             
         Returns:
-            ConversationBufferMemory instance
+            ChatMessageHistory instance
         """
         if conversation_id not in self._memories:
-            self._memories[conversation_id] = ConversationBufferMemory(
-                return_messages=True,
-                memory_key="chat_history",
-                output_key="output"
-            )
+            self._memories[conversation_id] = ChatMessageHistory()
             self.logger.info(f"Created new memory for conversation: {conversation_id}")
         
         return self._memories[conversation_id]
@@ -41,7 +37,7 @@ class MemoryService(LoggerMixin):
         self, 
         conversation: Conversation,
         max_messages: Optional[int] = None
-    ) -> ConversationBufferMemory:
+    ) -> ChatMessageHistory:
         """
         Load conversation history into memory.
         
@@ -50,7 +46,7 @@ class MemoryService(LoggerMixin):
             max_messages: Maximum number of messages to load
             
         Returns:
-            ConversationBufferMemory with loaded history
+            ChatMessageHistory with loaded history
         """
         memory = self.get_memory(conversation.id)
         max_msg = max_messages or settings.max_conversation_history
@@ -64,9 +60,9 @@ class MemoryService(LoggerMixin):
         # Load messages into memory
         for message in recent_messages:
             if message.role == MessageRole.USER:
-                memory.chat_memory.add_user_message(message.content)
+                memory.add_user_message(message.content)
             elif message.role == MessageRole.ASSISTANT:
-                memory.chat_memory.add_ai_message(message.content)
+                memory.add_ai_message(message.content)
         
         self.logger.info(
             f"Loaded {len(recent_messages)} messages into memory for conversation: {conversation.id}"
@@ -88,9 +84,9 @@ class MemoryService(LoggerMixin):
         memory = self.get_memory(conversation_id)
         
         if message.role == MessageRole.USER:
-            memory.chat_memory.add_user_message(message.content)
+            memory.add_user_message(message.content)
         elif message.role == MessageRole.ASSISTANT:
-            memory.chat_memory.add_ai_message(message.content)
+            memory.add_ai_message(message.content)
         
         self.logger.debug(f"Added message to memory: {conversation_id}")
     
@@ -110,7 +106,7 @@ class MemoryService(LoggerMixin):
             Formatted conversation context
         """
         memory = self.get_memory(conversation_id)
-        messages = memory.chat_memory.messages
+        messages = memory.messages
         
         if not messages:
             return ""

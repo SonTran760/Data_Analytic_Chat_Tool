@@ -72,17 +72,17 @@ async def system_info():
     settings = get_settings()
     
     return {
-        "app_name": settings.APP_NAME,
-        "version": settings.APP_VERSION,
-        "environment": settings.ENVIRONMENT,
+        "app_name": settings.app_name,
+        "version": settings.app_version,
+        "environment": settings.environment,
         "llm_providers": {
-            "openai": settings.OPENAI_API_KEY is not None,
-            "google": settings.GOOGLE_API_KEY is not None,
-            "anthropic": settings.ANTHROPIC_API_KEY is not None
+            "openai": settings.openai_api_key != "",
+            "google": settings.google_api_key != "",
+            "anthropic": settings.anthropic_api_key != ""
         },
         "services": {
-            "cosmos_db": settings.COSMOS_DATABASE_NAME,
-            "vector_store": settings.VECTOR_STORE_TYPE,
+            "cosmos_db": settings.cosmos_database_name,
+            "vector_store": settings.vector_store_type,
             "rag_enabled": True
         }
     }

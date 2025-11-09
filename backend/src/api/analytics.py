@@ -195,7 +195,7 @@ async def index_documents(
         logger.info(f"Indexing {len(documents)} documents for user: {user_id}")
         
         # Format documents
-        from langchain.schema import Document
+        from langchain_core.documents import Document
         
         docs = [
             Document(
